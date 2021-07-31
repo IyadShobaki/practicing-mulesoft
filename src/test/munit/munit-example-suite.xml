@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="munit-example-suite.xml" />
+	<munit:test name="get-account-details-by-id-test" doc:id="41404f86-ec20-4bd7-a438-a4a250cd60bd" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Select" doc:id="ff1f73bf-8a71-49f6-bb79-dc787a5a46c4" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="11895b34-f147-430d-b17c-106e875d3162" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java --- readUrl('classpath://getaccountdetailsbyidtest\mock_payload.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="accId" value="#[output application/java --- readUrl('classpath://getaccountdetailsbyidtest\mock_variable_.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="28432fc7-cb36-40c9-aad1-91cadeb31737" >
+				<munit:payload value="#[readUrl('classpath://getaccountdetailsbyidtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getaccountdetailsbyidtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="accId" value="#[output application/java --- readUrl('classpath://getaccountdetailsbyidtest\set-event_variable_.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get-account-details-by-id" doc:id="41953cc8-e6bd-447c-b50b-c19fc8d822ec" name="get-account-details-by-id"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="4e430bd1-81e5-4486-ad1e-6a5fabe10494" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getaccountdetailsbyidtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="munit-exampleFlow-test" doc:id="39ceee80-9846-4e27-8583-5040ae02dabd" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock create-salesforce-account" doc:id="f4d879a1-2454-41ee-bc16-d65348644398" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="78dc6f39-9fb9-4c17-a48d-de4abb0e099b" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java --- readUrl('classpath://munitexampleFlowtest\mock_payload.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="accId" value="#[output application/java --- readUrl('classpath://munitexampleFlowtest\mock_variable_.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:spy doc:name="Spy Transform Message" doc:id="9c5f8fc3-2c21-46ec-a018-43fd6fcc7904" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="c91c82dd-615d-4fbb-91ea-ac0a6a77543d" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="ba94bd51-8067-46c6-989d-35b9d8f4f8eb" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import munitexampleFlowtest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="9b2b6987-b3e1-4c20-9dd3-ca47fc6a0970" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import munitexampleFlowtest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="3443ebef-855b-43f8-8794-bdb294a6ea56" >
+				<munit:payload value="#[readUrl('classpath://munitexampleFlowtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://munitexampleFlowtest\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to munit-exampleFlow" doc:id="e4a3ddb1-80b1-4b01-8752-f2c61c30994c" name="munit-exampleFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="2f0f38c4-6824-4c14-9ecd-6b041fe20c34" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import munitexampleFlowtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify get-account-details-by-id" doc:id="d30c956c-e1ee-4786-af9b-c1d45bb72fd1" processor="flow-ref" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="62a63d55-63b3-481c-a841-137705b6a87e" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Transform Message" doc:id="7b52842f-ec0b-4ac0-b8e6-b844c1154b52" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="c91c82dd-615d-4fbb-91ea-ac0a6a77543d" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="create-salesforce-account-test" doc:id="66d17984-4cc3-4e67-9dd5-0eca6e0cb582" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Create" doc:id="46c657fc-0800-42d5-8d60-036482a0d19e" processor="salesforce:create">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ccce7653-1745-40e6-97df-12daeae4c7b0" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="SALESFORCE:CONNECTIVITY" />
+					<munit-tools:variables >
+						<munit-tools:variable key="accId" value="#[output application/java --- readUrl('classpath://createsalesforceaccounttest\mock_variable_.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="d8d67ffb-131e-47a3-a834-a1f9e66e3629" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://createsalesforceaccounttest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:variables >
+					<munit:variable key="accId" value="#[output application/java --- readUrl('classpath://createsalesforceaccounttest\set-event_variable_.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to create-salesforce-account" doc:id="a53d1e14-c3ed-481f-b498-54a21dfb4836" name="create-salesforce-account"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="6f2d7350-9c27-4069-8338-89dc0cdd71e1" expression="#[payload]" is='#[MunitTools::equalToIgnoringCase("Unabale to connect to salesforce")]'/>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

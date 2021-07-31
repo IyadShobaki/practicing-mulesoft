@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<flow name="munit-exampleFlow" doc:id="23e18d77-ff7b-4952-8013-19f0ed4e7664" >
+		<http:listener doc:name="Listener" doc:id="e7d1182a-d0d5-46f0-84cc-a658832be38e" config-ref="httpListenerConfig" path="/test/{accId}"/>
+		<set-variable value="#[attributes.uriParams.accId]" doc:name="Set Variable" doc:id="c1401cce-fe9c-4127-9b0d-e7231dea2148" variableName="accId"/>
+		<flow-ref doc:name="get-account-details-by-id" doc:id="62a63d55-63b3-481c-a841-137705b6a87e" name="get-account-details-by-id"/>
+		<flow-ref doc:name="create-salesforce-account" doc:id="78dc6f39-9fb9-4c17-a48d-de4abb0e099b" name="create-salesforce-account"/>
+		<ee:transform doc:name="Transform Message" doc:id="c91c82dd-615d-4fbb-91ea-ac0a6a77543d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="ce89d13a-aa8b-4742-94c3-9460c00135b7" message="#[payload]"/>
+	</flow>
+	<flow name="get-account-details-by-id" doc:id="aa7d0fc9-3100-456f-b9dc-2827482da552" >
+		<db:select doc:name="Select" doc:id="11895b34-f147-430d-b17c-106e875d3162" config-ref="mSqlDatabaseConfig">
+			<db:sql ><![CDATA[select * from BankDetails where id = :id]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	id: vars.accId
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="80cf9922-257f-49fa-adcd-3e8ef4dc09d4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+[
+	{
+		"Name": payload.Name,
+		"Phone": "9999999",
+		"BillingCity": "Lakewood"
+	}
+]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="8dcbffa7-5466-4332-9ac5-e29e74eda52a" message="#[payload]"/>
+	</flow>
+	<flow name="create-salesforce-account" doc:id="2b7c540e-a20b-4ffc-8ecc-6a4e47a17c86" >
+		<ee:transform doc:name="Transform Message" doc:id="3a410348-145e-4f82-b1aa-4a22512da5e2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:create doc:name="Create" doc:id="ccce7653-1745-40e6-97df-12daeae4c7b0" config-ref="salesforceConfig" type="Account"/>
+		<logger level="INFO" doc:name="Logger" doc:id="e4eeffb1-566c-4ba8-a440-2896f4e9000d" message="#[payload]" />
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="265806c0-3ca9-4be9-866c-33d0157aca33" type="SALESFORCE:CONNECTIVITY">
+				<set-payload value='Unabale to connect to salesforce' doc:name="Set Payload" doc:id="180c2af2-fc8d-455f-b302-ab50fb20ca4b" />
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	
+	
+	<secure-properties:config
+		name="securePropertiesConfig"
+		doc:name="Secure Properties Config"
+		doc:id="787314f8-3fe3-4c5d-9a86-4e14c6735d03"
+		file="config-secure.yaml"
+		key="${secure.key}">
+		<secure-properties:encrypt
+			algorithm="Blowfish" />
+	</secure-properties:config>
+
+
+
+	<db:config
+		name="mSqlDatabaseConfig"
+		doc:name="Database Config"
+		doc:id="86bf5f06-72ee-4964-bc4d-0d30732a7a83">
+		<db:mssql-connection
+			host="${secure::db.host}"
+			instanceName="${secure::db.instname}"
+			port="${secure::db.port}"
+			user="${secure::db.user}"
+			password="${secure::db.password}"
+			databaseName="${secure::db.dbname}" />
+	</db:config>
+
+	<salesforce:sfdc-config
+		name="salesforceConfig"
+		doc:name="Salesforce Config"
+		doc:id="7dd11531-0458-4110-8722-6bf77d385239">
+		<salesforce:basic-connection
+			username="${secure::salesforce.username}"
+			password="${secure::salesforce.password}"
+			securityToken="${secure::salesforce.token}" />
+	</salesforce:sfdc-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="ebd587e4-266c-475b-9014-c1943bf8a545" file="config.yaml" />
+	<http:listener-config name="httpListenerConfig" doc:name="HTTP Listener config" doc:id="52c06be8-e963-49f4-bde8-51698b5fe726" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<global-property doc:name="Global Property" doc:id="ce11bf8d-af63-4117-ac11-0158f9eb9398" name="secure.key" value="********************" />
+</mule>

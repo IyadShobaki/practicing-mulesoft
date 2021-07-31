@@ -1,0 +1,22 @@
+For testing outside Anypoint Studio add the following to pom.xml file:
+      (Notes from 2nd mulesoft training in pom file)
+
+- <properties> tag :  <app.runtime.semver>4.3.0</app.runtime.semver>
+
+- <configuration> : <runtimeVersion>${app.runtime.semver}</runtimeVersion>
+					<runtimeProduct>MULE_EE</runtimeProduct>
+
+- <formats> : <format>console</format>
+
+- <pluginRepositories> : 
+
+		<pluginRepository>
+			<id>releases-ee</id>
+			<name>mulesoft release repository - EE</name>
+			<url>https://repository.mulesoft.org/nexus/content/repositories/releases-ee/</url>
+		</pluginRepository>
+		
+To avoid this error "An error occurred: java.lang.IllegalStateException: Cannot start embedded container
+        
+at org.mule.runtime.module.embedd..." when run 'mvn clean verify' from CMD
+
