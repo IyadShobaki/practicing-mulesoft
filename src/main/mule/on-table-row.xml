@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<flow name="on-table-rowFlow" doc:id="db0b51f8-49bf-4b75-9a09-9979d761b898" >
+		<db:listener doc:name="On Table Row" doc:id="400587a6-76c9-448c-abe8-e043bbee9eb1" config-ref="mSqlDatabaseConfig" table="BankDetails" watermarkColumn="Id" idColumn="Id">
+			<scheduling-strategy >
+				<fixed-frequency frequency="15" timeUnit="SECONDS"/>
+			</scheduling-strategy>
+		</db:listener>
+		<set-variable value='#[java!com::revature::pojo::Functions::fileExist("C:\\file_processing_test\\output\\db_bankdetails.csv")]' doc:name="fileExists" doc:id="690c01b6-a208-4b0c-981e-605872edc4f0" variableName="fileExists"/>
+		<logger level="INFO" doc:name="Logger" doc:id="127201fd-1828-40d1-899a-16fa72643931" message="#[payload]"/>
+		<choice doc:name="Choice" doc:id="cc077113-daae-4d11-a4b6-909741e130c8" >
+			<when expression="#[vars.fileExists == true]">
+				<ee:transform doc:name="Transform Message" doc:id="ce0fe723-24dc-4ae0-b900-3e22688d2025">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/csv header=false
+---
+[payload]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+				<file:write doc:name="Write" doc:id="c5bb0953-0358-4f4d-b2ad-c025768711b1" config-ref="fileConfig" path="output/db_bankdetails.csv" mode="APPEND" />
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="d08c09ee-be2a-4d65-bfdf-758b61615604" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv
+---
+[payload]]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<file:write doc:name="Write" doc:id="776f3690-6b16-4306-95bf-af7cc206e9ad" config-ref="fileConfig" path="output/db_bankdetails.csv"/>
+			</otherwise>
+		</choice>
+	</flow>
+</mule>

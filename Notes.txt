@@ -20,3 +20,30 @@ To avoid this error "An error occurred: java.lang.IllegalStateException: Cannot 
         
 at org.mule.runtime.module.embedd..." when run 'mvn clean verify' from CMD
 
+--- Using java function to set a mule variable. 
+I used to check if the csv file exists so I don't add headers (on-table-row flow)
+
+ - Add a package and java class to src/main/java
+ 
+ Example: 
+			package com.revature.pojo;
+
+			//import java.io.*;
+			import java.nio.file.*;
+
+			public class Functions {
+				
+				public static boolean fileExist(String filePath) {
+					//File file = new File(filePath);
+					//return file.exists();
+					Path path = Paths.get(filePath);
+					if(Files.exists(path)) {
+						return true;
+					}
+					return false;
+				}
+			}
+			
+	- the value for Set Variable componenet:
+	#[java!com::revature::pojo::Functions::fileExist("C:\\file_processing_test\\output\\db_bankdetails.csv")]
+	
