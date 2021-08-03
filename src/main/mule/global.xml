@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <mule
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
 	xmlns:http="http://www.mulesoft.org/schema/mule/http"
 	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
 	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
 	xmlns:db="http://www.mulesoft.org/schema/mule/db"
 	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
 http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
 	
 	
 	<secure-properties:config
@@ -52,5 +53,8 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 	<http:listener-config name="httpListenerConfig" doc:name="HTTP Listener config" doc:id="52c06be8-e963-49f4-bde8-51698b5fe726" >
 		<http:listener-connection host="0.0.0.0" port="8081" />
 	</http:listener-config>
-	<global-property doc:name="Global Property" doc:id="ce11bf8d-af63-4117-ac11-0158f9eb9398" name="secure.key" value="********************" />
+	<global-property doc:name="Global Property" doc:id="ce11bf8d-af63-4117-ac11-0158f9eb9398" name="secure.key" value="***************" />
+	<file:config name="fileConfig" doc:name="File Config" doc:id="a6a96c4b-1be7-4b97-bc5c-1103f673809d" >
+		<file:connection workingDir="C:\file_processing_test" />
+	</file:config>
 </mule>

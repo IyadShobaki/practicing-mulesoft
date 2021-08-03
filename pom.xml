@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
-	xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.mycompany</groupId>
@@ -17,8 +14,8 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<app.runtime>4.3.0-20210622</app.runtime>
-		
-		<app.runtime.semver>4.3.0</app.runtime.semver><!-- Added,,,, Iyad -->
+		<app.runtime.semver>4.3.0</app.runtime.semver>
+		<!-- Added,,,, Iyad -->
 		<mule.maven.plugin.version>3.5.2</mule.maven.plugin.version>
 		<munit.version>2.3.5</munit.version>
 	</properties>
@@ -59,7 +56,7 @@
 					</execution>
 				</executions>
 				<configuration>
-				<!-- For testing outside anypoint studio ,,,  Iyad -->
+					<!-- For testing outside anypoint studio ,,,  Iyad -->
 					<runtimeVersion>${app.runtime.semver}</runtimeVersion>
 					<runtimeProduct>MULE_EE</runtimeProduct>
 
@@ -67,8 +64,8 @@
 						<runCoverage>true</runCoverage>
 						<formats>
 							<format>html</format>
-							
-							<format>console</format><!-- Added ,,,,, Iyad -->
+							<format>console</format>
+							<!-- Added ,,,,, Iyad -->
 						</formats>
 					</coverage>
 				</configuration>
@@ -132,6 +129,12 @@
 			<version>1.0.2</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-file-connector</artifactId>
+			<version>1.3.4</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>
@@ -158,13 +161,12 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</pluginRepository>
-		
-		<pluginRepository> <!-- Added ,,,,, Iyad -->
+		<pluginRepository>
+			<!-- Added ,,,,, Iyad -->
 			<id>releases-ee</id>
 			<name>mulesoft release repository - EE</name>
 			<url>https://repository.mulesoft.org/nexus/content/repositories/releases-ee/</url>
 		</pluginRepository>
-		
 	</pluginRepositories>
 
 </project>

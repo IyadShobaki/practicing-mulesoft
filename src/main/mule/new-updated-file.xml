@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:ftp="http://www.mulesoft.org/schema/mule/ftp"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ftp http://www.mulesoft.org/schema/mule/ftp/current/mule-ftp.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="new-updated-fileFlow" doc:id="5012ebb0-84ea-465c-85d4-afba1d38151b" >
+		<file:listener doc:name="On New or Updated File" doc:id="d99372ab-db08-4d25-8acb-de0145f574ac" config-ref="fileConfig" directory="input" renameTo="#[(vars.fileName as String splitBy '.')[0] ++ '____' ++ (now() as String {format: 'yyyyMMdd-hhmmss-SSS-'}) ++ '.csv']" moveToDirectory="output">
+			<scheduling-strategy >
+				<fixed-frequency frequency="5000"/>
+			</scheduling-strategy>
+			<file:matcher filenamePattern="*.csv" />
+		</file:listener>
+		<set-variable value="#[message.attributes.fileName default 'accounts.csv']" doc:name="fileName" doc:id="426c2d9c-6433-431d-b1b7-8bb84ddfe82a" variableName="fileName"/>
+		<ee:transform doc:name="Transform Message" doc:id="63eac87e-ac8e-45bf-8fed-b0932079a6ac" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<foreach doc:name="For Each - SYNC" doc:id="03fec8e7-07a2-445f-acb5-532edcb59762" collection="#[payload]">
+			<logger level="INFO" doc:name="Logger" doc:id="fc576e5c-624d-4796-939e-d3132efdf134" message="#[payload]"/>
+		</foreach>
+		<logger level="INFO" doc:name="Logger" doc:id="3899fa02-2bf0-4f84-bbe2-08381c6b7cc6" message="#[payload]" />
+		<parallel-foreach doc:name="Parallel For Each - ASYNC" doc:id="1bf5cb27-857c-4ef1-9586-3323168aabb2" collection="#[payload]">
+			<logger level="INFO" doc:name="Logger" doc:id="07e932b4-cb11-476b-8a3d-10fa490d83c0" message="#[payload]" />
+		</parallel-foreach>
+	</flow>
+</mule>
