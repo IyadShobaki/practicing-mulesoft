@@ -25,7 +25,7 @@ I used to check if the csv file exists so I don't add headers (on-table-row flow
 
  - Add a package and java class to src/main/java
  
- Example: 
+   Example: 
 			package com.revature.pojo;
 
 			//import java.io.*;
@@ -47,3 +47,12 @@ I used to check if the csv file exists so I don't add headers (on-table-row flow
 	- the value for Set Variable componenet:
 	#[java!com::revature::pojo::Functions::fileExist("C:\\file_processing_test\\output\\db_bankdetails.csv")]
 	
+--- Using python Execute componenet to check if the the file exists or not
+ - Add Scripting -> Execute componenet
+ - Right click Configure and add maven dependency -> look for jython standalone
+ - (Left menu) Advanced -> set Target Variable: variableName
+ - Add the code to General -> Code section:
+   Example: 
+		import os
+		result = os.path.exists(FilePath)
+ * Parameters: {FilePath: 'C:\\file_processing_test\\output\\db_bankdetails.csv'}
