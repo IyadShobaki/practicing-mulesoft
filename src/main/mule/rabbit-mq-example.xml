@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:amqp="http://www.mulesoft.org/schema/mule/amqp"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/amqp http://www.mulesoft.org/schema/mule/amqp/current/mule-amqp.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+
+	<flow
+		name="rabbit-mq-exampleFlow1"
+		doc:id="02f66e40-f71f-48e8-8b9e-d157851e303d">
+		<http:listener
+			doc:name="Listener"
+			doc:id="bdaa88f1-b2fa-43a1-9460-d1b2091c646c"
+			config-ref="httpListenerConfig"
+			path="/rabbitmq" />
+		<try
+			doc:name="Try"
+			doc:id="d45ec608-30a8-4093-ac46-3126e5024de7"
+			transactionalAction="ALWAYS_BEGIN">
+			<amqp:publish
+				doc:name="Publish"
+				doc:id="a8d7f274-9edb-4876-9fb9-86e8970cfd21"
+				config-ref="rabbitMqConfig"
+				exchangeName='#[""]'
+				routingKeys="#[['test-q']]" />
+			<logger
+				level="INFO"
+				doc:name="Logger"
+				doc:id="dd460dfd-05f3-4afb-9a71-c9bac85e52d2"
+				message="#[output application/json --- attributes]" />
+		</try>
+	</flow>
+	<!-- 
+	<flow
+		name="rabbit-mq-exampleFlow"
+		doc:id="9ffd730e-d5f7-43ee-a078-e05dea11d811">
+		<amqp:listener
+			doc:name="Listener"
+			doc:id="66d55725-1283-438b-8aaa-3368a5adaa6a"
+			config-ref="rabbitMqConfig"
+			queueName="test-q"
+			ackMode="AUTO">
+			<amqp:listener-quality-of-service-config
+				prefetchSize="0"
+				prefetchCount="1" />
+		</amqp:listener>
+		<logger
+			level="INFO"
+			doc:name="Logger"
+			doc:id="96c625b7-daa9-4907-85c8-922dcd8a85fb"
+			message="#[output application/json -&#45;&#45; attributes]" />
+		<logger
+			level="INFO"
+			doc:name="Logger"
+			doc:id="ddf7ea7f-22aa-40df-9d40-b9a9634b9edb"
+			message="Received payload #[payload]" />
+		<ee:transform
+			doc:name="Transform Message"
+			doc:id="22e98755-65da-404a-8635-da3e4dd9a843">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+import wait from dw::Runtime
+-&#45;&#45;
+{
+	message: "Hello World"
+} wait 10000]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	 -->
+	 <!--
+	<flow
+		name="rabbit-mq-exampleFlow"
+		doc:id="32d9e6f6-a797-4a2b-b64c-007e09ec08bb">
+		<amqp:listener
+			doc:name="Listener"
+			doc:id="b8f0a388-db56-4c8a-975b-47915a4177df"
+			config-ref="rabbitMqConfig"
+			queueName="test-q"
+			ackMode="MANUAL">
+			<amqp:listener-quality-of-service-config
+				prefetchSize="0"
+				prefetchCount="2" />
+		</amqp:listener>
+		<logger
+			level="INFO"
+			doc:name="Logger"
+			doc:id="fe7a4d17-e9f2-469c-83db-f63cf3568b6b"
+			message="#[output application/json -&#45;&#45; attributes]" />
+		<logger
+			level="INFO"
+			doc:name="Logger"
+			doc:id="0759c4d1-545b-4a3c-9bd8-056d89999faf"
+			message="Received payload #[payload]" />
+		<ee:transform
+			doc:name="Transform Message"
+			doc:id="4105647f-b69f-43ae-b523-24894a7cc093">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+import wait from dw::Runtime
+-&#45;&#45;
+{
+	message: "Hello World"
+} wait 10000]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<amqp:ack
+			doc:name="Ack"
+			doc:id="84414b2c-cc18-422b-bfb6-d81dae7083e7"
+			ackId="#[attributes.ackId]" />
+	
+</flow>
+-->
+
+	<flow
+		name="rabbit-mq-exampleFlow"
+		doc:id="32d9e6f6-a797-4a2b-b64c-007e09ec08bb">
+		<amqp:listener
+			doc:name="Listener"
+			doc:id="b8f0a388-db56-4c8a-975b-47915a4177df"
+			config-ref="rabbitMqConfig"
+			queueName="demo-q"
+			ackMode="MANUAL">
+			<amqp:listener-quality-of-service-config
+				prefetchSize="0"
+				prefetchCount="2" />
+		</amqp:listener>
+		<logger
+			level="INFO"
+			doc:name="Logger"
+			doc:id="fe7a4d17-e9f2-469c-83db-f63cf3568b6b"
+			message="#[output application/json --- attributes]" />
+		<logger
+			level="INFO"
+			doc:name="Logger"
+			doc:id="0759c4d1-545b-4a3c-9bd8-056d89999faf"
+			message="Received payload #[payload]" />
+		<ee:transform
+			doc:name="Transform Message"
+			doc:id="4105647f-b69f-43ae-b523-24894a7cc093">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+import wait from dw::Runtime
+---
+{
+	message: "Hello World"
+} wait 10000]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<amqp:reject doc:name="Reject" doc:id="05b723c9-4826-4839-a609-a1d84a9a1e8c" ackId="#[attributes.ackId]"/>
+
+	
+</flow>
+</mule>
